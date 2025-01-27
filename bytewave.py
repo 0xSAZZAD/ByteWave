@@ -21,7 +21,7 @@ def upload_file():
             return jsonify({'error': 'No selected file'}), 400
 
         # Save the file to /var/www/uploads
-        file.save('/var/www/uploads/' + file.filename)
+        file.save('/tmp/' + file.filename)
 
         return jsonify({'message': 'File successfully uploaded'}), 200
 
@@ -31,7 +31,7 @@ def upload_file():
 @app.route('/files')
 def list_files():
     try:
-        files = os.listdir('/var/www/uploads')
+        files = os.listdir('/tmp')
         return render_template('files.html', files=files)
 
     except Exception as e:
@@ -39,12 +39,12 @@ def list_files():
 
 @app.route('/download/<filename>')
 def download_file(filename):
-    return send_from_directory('/var/www/uploads', filename, as_attachment=True)
+    return send_from_directory('/tmp', filename, as_attachment=True)
 
 @app.route('/delete/<filename>')
 def delete_file(filename):
     try:
-        file_path = os.path.join('/var/www/uploads', filename)
+        file_path = os.path.join('/tmp', filename)
         os.remove(file_path)
         return jsonify({'message': 'File successfully deleted'}), 200
 
